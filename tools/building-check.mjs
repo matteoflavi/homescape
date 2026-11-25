@@ -565,6 +565,89 @@ await p.keyboard.press('Escape')
   await shot('stairs-u-upper')
 }
 
+// --- L-shaped stairs: a straight flight, a 90° turn (flat landing or winders) anywhere along the climb, then an optional
+// second flight; the step counts set the size, the stairwell is L-shaped, the space below the steps stays free ---
+{
+  await setLevel(plan.l0)
+  await p.waitForTimeout(300)
+  // Back where the sample home has its stairs (the U test moved them), without walls
+  await p.evaluate(({ id, x }) => window.__homescape.getState().layout.updateItem(id, { x, walls: undefined }), { id: S.id, x: S.x })
+  const m = await p.evaluate(async (id) => {
+    const st = await import('/src/model/stairs.ts')
+    const sw = await import('/src/model/stairwell.ts')
+    // The store's state is replaced on every change: read it fresh
+    const S0 = () => window.__homescape.getState().layout
+    const r2 = (v) => (v == null ? null : Math.round(v * 100) / 100)
+    const lv = () => S0().layout.levels.find((l) => (l.elevation ?? 0) === 0)
+    const up = () => S0().layout.levels.find((l) => (l.elevation ?? 0) === 1)
+    const it = () => lv().items.find((i) => i.id === id)
+    // Winders: 16 steps, 10 straight treads, 5 winders turning right, nothing after the turn (1 x 3.7 m)
+    const wind = { variant: 'lRight', steps: 16, cornerSteps: 5, stepsAfter: 0, walls: undefined }
+    const sizeW = st.lStairsSize(wind)
+    S0().updateItem(id, { ...wind, ...sizeW })
+    const w = it()
+    const hw = (lx, lz) => r2(st.stairsHeightLocal(w, lx, lz))
+    const winders = { size: sizeW, foot: hw(0, 1.8), top1: hw(0, -0.8), entry: hw(-0.3, -0.9), exit: hw(0.4, -1.75), arrive: hw(0.55, -1.4), corner: hw(0.9, 0.5) }
+    const wellW = sw.stairwellsOf(S0().layout.levels, up()).find((x) => x.id === id)
+    // Flat landing: 14 steps, 3 treads after the turn turning left (1.81 x 3.43 m)
+    const flat = { variant: 'lLeft', steps: 14, cornerSteps: 1, stepsAfter: 3 }
+    const sizeF = st.lStairsSize(flat)
+    S0().updateItem(id, { ...flat, ...sizeF })
+    const f = it()
+    const g = st.lLayout(f)
+    const hf = (lx, lz) => r2(st.stairsHeightLocal(f, lx, lz))
+    const landing = { size: sizeF, a: hf(g.fx - 0.3, -g.l / 2 + 0.2), b: hf(g.fx + 0.3, -g.l / 2 + 0.8), h2: r2(g.h2), arrive: hf(-g.w / 2 + 0.02, -g.l / 2 + 0.5), empty: hf(g.sT * (g.w / 2 - 0.3), g.l / 2 - 0.3) }
+    const wellF = sw.stairwellsOf(S0().layout.levels, up()).find((x) => x.id === id)
+    const rails = wellF ? sw.railEdges(wellF, []) : []
+    return { winders, wellW: wellW?.parts?.length ?? 0, landing, wellF: wellF?.parts?.length ?? 0, holes: wellF ? sw.holeRects(wellF).length : 0, rails: rails.length }
+  }, S.id)
+  const W = m.winders
+  ok(Math.abs(W.size.len - 1) < 0.01 && Math.abs(W.size.len2 - 3.7) < 0.01, `L stairs: the step counts set the size (16 steps, 5 winders: ${W.size.len} x ${W.size.len2} m)`)
+  ok(W.foot < 0.2 && Math.abs(W.top1 - 1.75) < 0.05 && W.entry < W.exit && W.entry >= 1.7 && W.exit > 2.4 && W.arrive > 2.7 && W.corner === null, `L stairs with winders: the straight flight, then the winders rise with the turn up to the floor above (${W.foot} / ${W.top1} / ${W.entry} / ${W.exit} / ${W.arrive} m)`)
+  ok(m.wellW === 1, `Without steps after the turn the stairwell is the flight's strip only (${m.wellW} part)`)
+  const L = m.landing
+  ok(Math.abs(L.a - L.b) < 0.01 && Math.abs(L.a - L.h2) < 0.01 && L.arrive > 2.6 && L.empty === null, `L stairs with a flat landing: flat corner at ${L.a} m, the second flight on to the floor above (${L.arrive} m), the corner beside the flight is free`)
+  ok(m.wellF === 2 && m.holes === 2 && m.rails >= 4, `The stairwell of L stairs is L-shaped (${m.holes} rectangles) with railings around it (${m.rails} edges)`)
+  // Walk up the winder stairs: from the foot of the flight to the corner, then toward the turn side to the upper floor
+  await p.evaluate((id) => {
+    const s = window.__homescape.getState().layout
+    s.updateItem(id, { variant: 'lRight', steps: 16, cornerSteps: 5, stepsAfter: 0, len: 1, len2: 3.7 })
+  }, S.id)
+  await p.waitForTimeout(500)
+  const atL = (lx, lz) => ({ x: S.x + lx * Math.cos(S.rot) + lz * Math.sin(S.rot), z: S.z - lx * Math.sin(S.rot) + lz * Math.cos(S.rot) })
+  await p.click('#fps-toggle')
+  await p.waitForSelector('#fps-hud')
+  await p.waitForTimeout(600)
+  const c0 = atL(0, 2.1)
+  await H('fpsTeleport', c0.x, c0.z, S.rot, 0)
+  await p.waitForTimeout(400)
+  await p.keyboard.down('KeyW')
+  let top = await H('fps')
+  for (let t = 0; t < 3000 && top.h < 1.6; t += 80) {
+    await p.waitForTimeout(80)
+    top = await H('fps')
+  }
+  await p.keyboard.up('KeyW')
+  ok(top.h >= 1.6, `Walking up the straight flight of L stairs reaches the turn (height ${top.h.toFixed(2)} m)`)
+  const c1 = atL(-0.1, -1.6)
+  await H('fpsTeleport', c1.x, c1.z, S.rot - Math.PI / 2, 0)
+  await p.waitForTimeout(400)
+  await p.keyboard.down('KeyW')
+  let upL = false
+  for (let t = 0; t < 3500 && !upL; t += 100) {
+    await p.waitForTimeout(100)
+    upL = (await p.evaluate(() => window.__homescape.getState().layout.levelId)) === plan.l1
+  }
+  await p.waitForTimeout(400)
+  await p.keyboard.up('KeyW')
+  ok(upL, 'Walking up the winders of L stairs reaches the upper floor')
+  await p.keyboard.press('Escape')
+  await p.keyboard.press('Escape')
+  await p.waitForTimeout(500)
+  await setLevel(plan.l0)
+  await p.waitForTimeout(300)
+}
+
 // --- Cleanup ---
 await p.evaluate(
   ([prevId, id]) => {

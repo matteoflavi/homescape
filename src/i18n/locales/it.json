@@ -1879,5 +1879,13 @@
  "{room} deleted. ⌘Z undoes it.": "Stanza eliminata: {room}. ⌘Z per annullare.",
  "{value}%": "{value}%",
  "Ø {d} m · can be oval": "Ø {d} m · può essere ovale",
- "⌥ or ⇧ + left drag": "⌥ o ⇧ + trascina con il sinistro"
+ "⌥ or ⇧ + left drag": "⌥ o ⇧ + trascina con il sinistro",
+ "L, turns left": "L, gira a sinistra",
+ "L, turns right": "L, gira a destra",
+ "L-shaped stairs": "Scala a L",
+ "a landing or winders, anywhere": "pianerottolo o ventaglio, dove vuoi",
+ "Steps": "Gradini",
+ "Steps in the turn": "Gradini nella curva",
+ "Steps after the turn": "Gradini dopo la curva",
+ "Steps in the turn: 1 is a flat landing, more are winders. Straight steps are 27 cm deep: the stairs get longer or wider as you change the steps.": "Gradini nella curva: 1 è un pianerottolo piatto, di più è una curva a ventaglio. I gradini dritti sono profondi 27 cm: la scala si allunga o si allarga quando li cambi."
 }

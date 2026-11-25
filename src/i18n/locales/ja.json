@@ -1879,5 +1879,13 @@
  "{room} deleted. ⌘Z undoes it.": "{room}を削除しました。⌘Zで元に戻せます。",
  "{value}%": "{value}%",
  "Ø {d} m · can be oval": "Ø{d} m · 楕円にもできます",
- "⌥ or ⇧ + left drag": "⌥ または ⇧ + 左ドラッグ"
+ "⌥ or ⇧ + left drag": "⌥ または ⇧ + 左ドラッグ",
+ "L, turns left": "L字、左に曲がる",
+ "L, turns right": "L字、右に曲がる",
+ "L-shaped stairs": "L字階段",
+ "a landing or winders, anywhere": "踊り場か回り段、好きな位置に",
+ "Steps": "段数",
+ "Steps in the turn": "曲がり部分の段数",
+ "Steps after the turn": "曲がった後の段数",
+ "Steps in the turn: 1 is a flat landing, more are winders. Straight steps are 27 cm deep: the stairs get longer or wider as you change the steps.": "曲がり部分の段数：1は平らな踊り場、それ以上は回り段です。直線の段の奥行きは27cm：段数を変えると階段が長く、または広くなります。"
 }

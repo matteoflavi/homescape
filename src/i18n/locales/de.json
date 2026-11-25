@@ -1879,5 +1879,13 @@
  "{room} deleted. ⌘Z undoes it.": "{room} gelöscht. Rückgängig mit ⌘Z.",
  "{value}%": "{value} %",
  "Ø {d} m · can be oval": "Ø {d} m · kann oval sein",
- "⌥ or ⇧ + left drag": "⌥ oder ⇧ + mit links ziehen"
+ "⌥ or ⇧ + left drag": "⌥ oder ⇧ + mit links ziehen",
+ "L, turns left": "L, links abbiegend",
+ "L, turns right": "L, rechts abbiegend",
+ "L-shaped stairs": "L-förmige Treppe",
+ "a landing or winders, anywhere": "Podest oder Wendelstufen, wo du willst",
+ "Steps": "Stufen",
+ "Steps in the turn": "Stufen in der Wendung",
+ "Steps after the turn": "Stufen nach der Wendung",
+ "Steps in the turn: 1 is a flat landing, more are winders. Straight steps are 27 cm deep: the stairs get longer or wider as you change the steps.": "Stufen in der Wendung: 1 ist ein flaches Podest, mehr sind gewendelte Stufen. Gerade Stufen sind 27 cm tief: Die Treppe wird länger oder breiter, wenn du die Stufen änderst."
 }

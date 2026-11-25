@@ -947,17 +947,21 @@ export const OPTIONS: Partial<
   },
   bicycle: { variantLabel: t('Type'), variants: [['bike', t('Bicycle')], ['ebike', t('E-bike')]], variantDef: 'bike', body: t('Bike frame color'), bodyList: ACCENT_COLORS },
   motorcycle: { variantLabel: t('Type'), variants: [['motorbike', t('Motorcycle')], ['scooter', t('Scooter')]], variantDef: 'motorbike', body: t('Color'), bodyList: ACCENT_COLORS },
-  // Straight (1 x 3.2 m) or U-shaped with a half landing (2.1 x 2.6 m; model/stairs.ts), turning left or right on the landing
+  // Straight (1 x 3.2 m), U-shaped with a half landing (2.1 x 2.6 m) or L-shaped with a corner landing anywhere along the
+  // climb (size from its step counts; model/stairs.ts), turning left or right on the landing
   stairs: {
     variantLabel: t('Shape'),
     variants: [
       ['straight', t('Straight')],
       ['uLeft', t('U, turns left')],
       ['uRight', t('U, turns right')],
+      ['lLeft', t('L, turns left')],
+      ['lRight', t('L, turns right')],
     ],
     variantDef: 'straight',
-    variantLen: { straight: 1, uLeft: 2.1, uRight: 2.1 },
-    variantLen2: { straight: 3.2, uLeft: 2.6, uRight: 2.6 },
+    // L sizes for the default 14 steps, 4 after the landing (model/stairs.ts > lStairsSize); the card resizes them
+    variantLen: { straight: 1, uLeft: 2.1, uRight: 2.1, lLeft: 1.81, lRight: 1.81 },
+    variantLen2: { straight: 3.2, uLeft: 2.6, uRight: 2.6, lLeft: 3.43, lRight: 3.43 },
     note: t('Put the stairs on the lower level: in first-person walk mode you climb them to the level above. The room with the stairs is drawn without a ceiling.'),
   },
   garageDoor: { note: t("Bind the garage door's motor (cover) or door sensor: the panels slide up as far as it is open.") },
@@ -1277,6 +1281,7 @@ export const ITEM_PRESETS: ItemPreset[] = [
   { id: 'christmasTreeOutdoor', kind: 'christmasTree', label: t('Outdoor Christmas tree'), sub: t('{h} m · planted', { h: formatNumber(3.5) }), extra: { variant: 'ground', len: 3.5 } },
   { id: 'sectional', kind: 'sofa', label: t('Sectional sofa'), sub: t('L-shaped'), extra: { variant: 'lRight', len: 2.6, len2: 2 } },
   { id: 'stairsU', kind: 'stairs', label: t('U-shaped stairs'), sub: t('two flights and a landing'), extra: { variant: 'uRight', len: 2.1, len2: 2.6 } },
+  { id: 'stairsL', kind: 'stairs', label: t('L-shaped stairs'), sub: t('a landing or winders, anywhere'), extra: { variant: 'lRight', len: 1.81, len2: 3.43 } },
   // Types that people look for by their own name (the search finds them too)
   { id: 'ottoman', kind: 'pouf', label: t('Ottoman'), sub: t('footrest'), extra: { variant: 'ottoman' } },
   { id: 'riceCooker', kind: 'multicooker', label: t('Rice cooker'), sub: t('goes on a counter'), extra: { variant: 'rice' } },

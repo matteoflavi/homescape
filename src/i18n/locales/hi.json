@@ -1879,5 +1879,13 @@
  "{room} deleted. ⌘Z undoes it.": "{room} हटा दिया गया। पूर्ववत करने के लिए ⌘Z दबाएँ।",
  "{value}%": "{value}%",
  "Ø {d} m · can be oval": "Ø {d} m · अंडाकार भी हो सकता है",
- "⌥ or ⇧ + left drag": "⌥ या ⇧ + बायाँ ड्रैग"
+ "⌥ or ⇧ + left drag": "⌥ या ⇧ + बायाँ ड्रैग",
+ "L, turns left": "L, बाएँ मुड़ती है",
+ "L, turns right": "L, दाएँ मुड़ती है",
+ "L-shaped stairs": "L-आकार की सीढ़ियाँ",
+ "a landing or winders, anywhere": "पायदान या घुमावदार सीढ़ियाँ, कहीं भी",
+ "Steps": "सीढ़ियाँ",
+ "Steps in the turn": "मोड़ की सीढ़ियाँ",
+ "Steps after the turn": "मोड़ के बाद की सीढ़ियाँ",
+ "Steps in the turn: 1 is a flat landing, more are winders. Straight steps are 27 cm deep: the stairs get longer or wider as you change the steps.": "मोड़ की सीढ़ियाँ: 1 सपाट पायदान है, अधिक घुमावदार सीढ़ियाँ हैं। सीधी सीढ़ियाँ 27 सेमी गहरी हैं: बदलने पर सीढ़ी लंबी या चौड़ी हो जाती है।"
 }

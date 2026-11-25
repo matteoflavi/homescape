@@ -1879,5 +1879,13 @@
  "{room} deleted. ⌘Z undoes it.": "{room} 삭제됨. ⌘Z로 되돌릴 수 있어요.",
  "{value}%": "{value}%",
  "Ø {d} m · can be oval": "Ø {d} m · 타원도 가능해요",
- "⌥ or ⇧ + left drag": "⌥ 또는 ⇧ + 왼쪽 드래그"
+ "⌥ or ⇧ + left drag": "⌥ 또는 ⇧ + 왼쪽 드래그",
+ "L, turns left": "L자, 왼쪽으로 꺾임",
+ "L, turns right": "L자, 오른쪽으로 꺾임",
+ "L-shaped stairs": "L자 계단",
+ "a landing or winders, anywhere": "참 또는 돌음계단, 원하는 위치에",
+ "Steps": "계단 수",
+ "Steps in the turn": "회전부 계단 수",
+ "Steps after the turn": "회전 후 계단 수",
+ "Steps in the turn: 1 is a flat landing, more are winders. Straight steps are 27 cm deep: the stairs get longer or wider as you change the steps.": "회전부 계단 수: 1은 평평한 참, 그 이상은 돌음계단입니다. 직선 계단의 깊이는 27cm이며, 계단 수를 바꾸면 길어지거나 넓어집니다."
 }

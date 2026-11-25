@@ -1879,5 +1879,13 @@
  "{room} deleted. ⌘Z undoes it.": "Pièce supprimée : {room}. ⌘Z pour annuler.",
  "{value}%": "{value} %",
  "Ø {d} m · can be oval": "Ø {d} m · peut être ovale",
- "⌥ or ⇧ + left drag": "⌥ ou ⇧ + glisser à gauche"
+ "⌥ or ⇧ + left drag": "⌥ ou ⇧ + glisser à gauche",
+ "L, turns left": "L, tourne à gauche",
+ "L, turns right": "L, tourne à droite",
+ "L-shaped stairs": "Escalier en L",
+ "a landing or winders, anywhere": "palier ou marches balancées, où vous voulez",
+ "Steps": "Marches",
+ "Steps in the turn": "Marches dans le virage",
+ "Steps after the turn": "Marches après le virage",
+ "Steps in the turn: 1 is a flat landing, more are winders. Straight steps are 27 cm deep: the stairs get longer or wider as you change the steps.": "Marches dans le virage : 1 est un palier plat, plus sont des marches balancées. Les marches droites font 27 cm : l'escalier s'allonge ou s'élargit quand vous les changez."
 }

@@ -17,7 +17,7 @@ import { mat, rng } from './kit/primitives'
 import { floorTexture, waterGlintTexture } from './kit/textures'
 import { roadSub, roadTexture, type NetPiece, type RoadTexture } from './kit/roads'
 import { StairwellRail } from './kit/outdoor'
-import { ceilingHoles, railEdges, stairwellsOf, subtractRects, type Stairwell } from '@/model/stairwell'
+import { ceilingHoles, holeRects, railEdges, stairwellsOf, subtractRects, type Stairwell } from '@/model/stairwell'
 
 /*
  * Room: a floor slab per part + wall runs along the outline of the union (geometry.ts > wallRuns).
@@ -588,7 +588,7 @@ export function RoomMesh({ room, level: fixed, still: stillProp }: { room: Room;
   return (
     <group>
       {rects.map((r, i) => {
-        const pieces = wells.length && !road ? subtractRects(r, wells.map((w) => w.r)) : null
+        const pieces = wells.length && !road ? subtractRects(r, wells.flatMap(holeRects)) : null
         if (!pieces || (pieces.length === 1 && pieces[0].w === r.w && pieces[0].d === r.d))
           return <Floor key={i} rect={road?.rects[i] ?? r} floor={room.floor} index={i} handlers={handlers} still={still} flow={flows[i]} road={road} />
         return pieces.map((p, k) => <Floor key={`${i}-${k}`} rect={p} full={r} floor={room.floor} index={i} handlers={handlers} still={still} flow={flows[i]} road={null} />)

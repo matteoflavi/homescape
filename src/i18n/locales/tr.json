@@ -1879,5 +1879,13 @@
  "{room} deleted. ⌘Z undoes it.": "{room} silindi. Geri almak için ⌘Z.",
  "{value}%": "%{value}",
  "Ø {d} m · can be oval": "Ø {d} m · oval de olur",
- "⌥ or ⇧ + left drag": "⌥ ya da ⇧ + sol sürükle"
+ "⌥ or ⇧ + left drag": "⌥ ya da ⇧ + sol sürükle",
+ "L, turns left": "L, sola döner",
+ "L, turns right": "L, sağa döner",
+ "L-shaped stairs": "L merdiven",
+ "a landing or winders, anywhere": "sahanlık ya da yelpaze, istediğin yerde",
+ "Steps": "Basamaklar",
+ "Steps in the turn": "Dönüşteki basamaklar",
+ "Steps after the turn": "Dönüşten sonraki basamaklar",
+ "Steps in the turn: 1 is a flat landing, more are winders. Straight steps are 27 cm deep: the stairs get longer or wider as you change the steps.": "Dönüşteki basamaklar: 1 düz bir sahanlık, daha fazlası yelpaze basamaktır. Düz basamaklar 27 cm derinliğinde: değiştirdikçe merdiven uzar ya da genişler."
 }

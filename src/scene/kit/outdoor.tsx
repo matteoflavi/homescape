@@ -7,7 +7,7 @@ import { deviceClass, domainOf, isActive, lightColor, lightLevel, num } from '@/
 import type { HassEntity } from '@/ha/types'
 import { GARAGE_DOOR, gardenLightDimensions, gardenLightScale, regularTreeScale } from '@/model/catalog'
 import { APERTURE_INSET, WALL_CUT_H, WALL_H, WALL_INNER_H, WALL_T } from '@/model/geometry'
-import { U_FLIGHT, U_GAP, U_LANDING, U_SIZE, wallSides } from '@/model/stairs'
+import { L_FLIGHT, lSteps, lTurnSide, U_FLIGHT, U_GAP, U_LANDING, U_SIZE, wallSides } from '@/model/stairs'
 import { roofView, useView } from '../camera'
 import { markShadows } from '../frame'
 import { Glow, Mist, Spin, useAmbient, useEased, useLitMaterial } from './effects'
@@ -2416,6 +2416,96 @@ function uStairsGeometry(sB: number, wallA: boolean, wallB: boolean) {
 }
 
 /**
+ * L stairs (model/stairs.ts > lLayout): the first flight climbs toward -z on the side away from the turn up to the square
+ * corner at the -z end, where the stairs turn 90°: a flat landing, or winders (wedge treads fanning around the inner corner
+ * point); the second flight leaves the corner sideways toward side sT and arrives at that side at 2.8 m. Step counts and
+ * size come from the item, so the turn can sit anywhere along the climb. Open steps (wooden treads on a thin white slab,
+ * nothing below them); handrails
+ * on the open sides of both flights and around the corner.
+ */
+function lStairsGeometry(W: number, L: number, c: { n: number; before: number; corner: number; after: number; fan: boolean }, sT: number) {
+  return cached(`stairs-l-${W.toFixed(3)}-${L.toFixed(3)}-${c.n}-${c.before}-${c.corner}-${c.after}-${sT}`, () => {
+    const rise = STAIR_H / c.n
+    const F = L_FLIGHT
+    const fw = F - 0.1
+    const fx = -sT * (W / 2 - F / 2)
+    const zL = -L / 2 + F
+    const px = fx + (sT * F) / 2
+    const h1 = c.before * rise
+    const h2 = (c.before + c.corner) * rise
+    const t1 = (L / 2 - zL) / c.before
+    const t2 = c.after ? (W - F) / c.after : 0
+    const treads: Part[] = []
+    const blocks: Part[] = []
+    // Open stairs: nothing under the steps (the space below stays free), a 5 cm slab under each tread
+    const step = (top: number, g: (h: number) => THREE.BufferGeometry, pos: [number, number, number]) => {
+      treads.push({ g: g(0.04), p: [pos[0], top - 0.02, pos[2]] })
+      blocks.push({ g: g(0.05), p: [pos[0], top - 0.065, pos[2]] })
+    }
+    for (let k = 1; k <= c.before; k++) step(k * rise, (h) => boxG(fw, h, t1), [fx, 0, L / 2 - (k - 0.5) * t1])
+    if (!c.fan) {
+      step(h2, (h) => boxG(F - 0.05, h, F - 0.05), [fx, 0, -L / 2 + F / 2])
+    } else {
+      // Winders: wedges between the turned angles (j-1)/corner and j/corner of 90°, around the pivot, cut to the corner
+      // square (shape in local x and -z, extruded upward)
+      const at = (phi: number): [number, number] => {
+        const dx = -sT * Math.cos(phi)
+        const dz = -Math.sin(phi)
+        const t = Math.min(F / Math.max(Math.abs(dx), 1e-6), F / Math.max(Math.abs(dz), 1e-6))
+        return [px + dx * t, zL + dz * t]
+      }
+      for (let j = 1; j <= c.corner; j++) {
+        const p0 = ((j - 1) / c.corner) * (Math.PI / 2)
+        const p1 = (j / c.corner) * (Math.PI / 2)
+        const pts: [number, number][] = [[px, zL], at(p0)]
+        if (p0 < Math.PI / 4 && p1 > Math.PI / 4) pts.push([px - sT * F, zL - F])
+        pts.push(at(p1))
+        const wedge = (h: number) => {
+          const shape = new THREE.Shape(pts.map(([x, z]) => new THREE.Vector2(x, -z)))
+          return new THREE.ExtrudeGeometry(shape, { depth: h, bevelEnabled: false }).rotateX(-Math.PI / 2).translate(0, -h / 2, 0)
+        }
+        step((c.before + j) * rise, wedge, [0, 0, 0])
+      }
+    }
+    for (let i = 1; i <= c.after; i++) step(h2 + i * rise, (h) => boxG(t2 + 0.02, h, fw), [px + sT * (i - 0.5) * t2, 0, -L / 2 + F / 2])
+    // handrails 0.95 m above the treads, balusters on every step
+    const rail: Part[] = []
+    const line = (a: [number, number, number], b: [number, number, number], steps: number) => {
+      rail.push(rod([a[0], a[1] + 0.95, a[2]], [b[0], b[1] + 0.95, b[2]], 0.03, C.kraftDark, 10))
+      for (let i = 0; i <= steps; i++) {
+        const t = steps ? i / steps : 0
+        const x = a[0] + (b[0] - a[0]) * t
+        const y = a[1] + (b[1] - a[1]) * t
+        const z = a[2] + (b[2] - a[2]) * t
+        rail.push(rod([x, y + 0.02, z], [x, y + 0.95, z], 0.012, C.white, 6))
+      }
+    }
+    const post = (x: number, y: number, z: number) => rail.push({ g: boxG(0.07, 1.05, 0.07), p: [x, y + 0.52, z], c: C.kraftDark })
+    const xo = fx - sT * (F / 2 - 0.05)
+    const xi = px - sT * 0.05
+    const zb = L / 2 - 0.05
+    const ze = -L / 2 + 0.05
+    // first flight: both sides; then around the outside of the corner (rising along the winders)
+    line([xo, rise, zb], [xo, h1, zL], c.before)
+    line([xi, rise, zb], [xi, h1, zL], c.before)
+    post(xo, 0, zb)
+    post(xi, 0, zb)
+    const hm = c.fan ? (h1 + h2) / 2 : h2
+    line([xo, c.fan ? h1 : h2, zL], [xo, hm, ze], c.fan ? Math.ceil(c.corner / 2) : 0)
+    line([xo, hm, ze], [xi, h2, ze], c.fan ? Math.ceil(c.corner / 2) : 0)
+    post(xo, hm, ze)
+    if (c.fan) post(xi, h1, zL)
+    // second flight: along the -z edge and along its inner (+z) side, up to the far side
+    if (c.after > 0) {
+      const xe = sT * (W / 2 - 0.05)
+      line([xi, h2, ze], [xe, STAIR_H - rise, ze], c.after)
+      line([xi, h2, zL - 0.05], [xe, STAIR_H - rise, zL - 0.05], c.after)
+    }
+    return { treads: merge(treads, true), blocks: merge(blocks), rail: merge(rail) }
+  })
+}
+
+/**
  * Stairs: straight (1 × 3.2 m, 14 steps from the first step at the +z end up to 2.8 m, the floor height, at the -z end;
  * wooden treads (woodGrainTexture), white risers and stringers, railing on the +x side) or U-shaped (uStairsGeometry).
  * Optional walls along the long sides (Item.walls, model/stairs.ts): full height like an interior wall, low in the plan
@@ -2426,12 +2516,24 @@ export function Stairs({ v }: P) {
   const innerFull = useView((s) => s.innerWalls === 'full')
   const fps = useView((s) => s.fps)
   const u = v.opts.variant === 'uLeft' || v.opts.variant === 'uRight'
-  const sides = wallSides({ walls: v.opts.walls })
+  const lShape = v.opts.variant === 'lLeft' || v.opts.variant === 'lRight'
+  const sides = wallSides({ walls: v.opts.walls, variant: v.opts.variant })
   const W = u ? U_SIZE.len : 1
   const L = u ? U_SIZE.len2 : STAIR_L
   const wallH = fps ? WALL_H : plan || !innerFull ? WALL_INNER_H : WALL_H
   const sB = v.opts.variant === 'uRight' ? 1 : -1
   const walls = sides.map((sx) => <Box key={sx} size={[WALL_T, wallH, L]} position={[sx * (W / 2 + WALL_T / 2), wallH / 2, 0]} material={mat(C.wall)} />)
+  if (lShape) {
+    const counts = lSteps({ steps: v.opts.steps, cornerSteps: v.opts.cornerSteps, stepsAfter: v.opts.stepsAfter })
+    const g = lStairsGeometry(v.opts.len ?? 2, v.opts.len2 ?? 3.2, counts, lTurnSide({ variant: v.opts.variant }))
+    return (
+      <group>
+        <M g={g.treads} m={woodMat(C.kraft)} />
+        <M g={g.blocks} m={mat(C.offWhite)} />
+        <M g={g.rail} m={vcMat(0.6)} />
+      </group>
+    )
+  }
   if (u) {
     const g = uStairsGeometry(sB, sides.includes(-sB), sides.includes(sB))
     return (

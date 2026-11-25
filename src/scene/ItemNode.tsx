@@ -94,15 +94,15 @@ function ItemNodeImpl({ item, entity, related, night, levelId, still = false }: 
   const swingOut = item.swing === 'out'
   const fixed = item.kind === 'window' && Boolean(item.fixed)
   const double = item.kind === 'window' && !fixed && Boolean(item.double)
-  const { len, drawers, top, body, fedAt, shape, variant, cover, len2, led, ledEntity, intensity, mount, beam, sink, dishwasher, walls, tilt, powerSource } = item
+  const { len, drawers, top, body, fedAt, shape, variant, cover, len2, led, ledEntity, intensity, mount, beam, sink, dishwasher, walls, steps, cornerSteps, stepsAfter, tilt, powerSource } = item
   // Built-in sink of the kitchen counter (model/counter.ts): in the middle unless there is a separate sink next to it
   const sinkAt = useLayout((s) => (item.kind === 'kitchenCounter' ? (counterSink(lvOf(s)?.items ?? [], item) ?? undefined) : undefined))
   // A doorless opening in a half wall is as high as the wall
   const halfOpening = useLayout((s) => item.kind === 'door' && item.variant === 'opening' && openingOnHalfWall(item, lvOf(s)?.rooms ?? []))
   const openingHeight = halfOpening ? HALF_WALL_H : len2
   const opts = useMemo(
-    () => ({ len, drawers, top, body, fedAt, shape, variant, cover, len2: openingHeight, led, ledEntity, intensity, mount, beam, sinkAt, sink, dishwasher, walls, tilt, powerSource }),
-    [len, drawers, top, body, fedAt, shape, variant, cover, openingHeight, led, ledEntity, intensity, mount, beam, sinkAt, sink, dishwasher, walls, tilt, powerSource],
+    () => ({ len, drawers, top, body, fedAt, shape, variant, cover, len2: openingHeight, led, ledEntity, intensity, mount, beam, sinkAt, sink, dishwasher, walls, steps, cornerSteps, stepsAfter, tilt, powerSource }),
+    [len, drawers, top, body, fedAt, shape, variant, cover, openingHeight, led, ledEntity, intensity, mount, beam, sinkAt, sink, dishwasher, walls, steps, cornerSteps, stepsAfter, tilt, powerSource],
   )
   useCursor(hover && interactive && !busy())
   // If the quick on/off pill opens on this item, it is placed by this group's body (scene/QuickAnchor.tsx)

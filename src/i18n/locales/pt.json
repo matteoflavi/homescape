@@ -1879,5 +1879,13 @@
  "{room} deleted. ⌘Z undoes it.": "Excluído: {room}. ⌘Z desfaz.",
  "{value}%": "{value}%",
  "Ø {d} m · can be oval": "Ø {d} m · pode ser oval",
- "⌥ or ⇧ + left drag": "⌥ ou ⇧ + arrastar com o esquerdo"
+ "⌥ or ⇧ + left drag": "⌥ ou ⇧ + arrastar com o esquerdo",
+ "L, turns left": "L, vira à esquerda",
+ "L, turns right": "L, vira à direita",
+ "L-shaped stairs": "Escada em L",
+ "a landing or winders, anywhere": "patamar ou degraus em leque, onde quiser",
+ "Steps": "Degraus",
+ "Steps in the turn": "Degraus na curva",
+ "Steps after the turn": "Degraus após a curva",
+ "Steps in the turn: 1 is a flat landing, more are winders. Straight steps are 27 cm deep: the stairs get longer or wider as you change the steps.": "Degraus na curva: 1 é um patamar plano, mais são degraus em leque. Os degraus retos têm 27 cm: a escada fica mais comprida ou mais larga quando os muda."
 }

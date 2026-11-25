@@ -10,7 +10,7 @@ import type { HassEntity } from '@/ha/types'
 import type { Item, Level } from '@/model/types'
 import { rectsOf } from '@/model/geometry'
 import { setGridHoles } from '@/model/pets'
-import { stairwellsOf } from '@/model/stairwell'
+import { holeRects, stairwellsOf } from '@/model/stairwell'
 import { cameraApi, FOV, useView } from './camera'
 import { CameraRig } from './CameraRig'
 import { Ground, RoomHandles } from './EditLayer'
@@ -39,7 +39,7 @@ import { Weather } from './Weather'
 import { weatherLight } from './weatherState'
 
 // Stairwells on upper floors are blocked in the walking grid of people and pets (model/pets.ts, model/stairwell.ts)
-setGridHoles((level) => stairwellsOf(useLayout.getState().layout?.levels ?? [], level).map((w) => w.r))
+setGridHoles((level) => stairwellsOf(useLayout.getState().layout?.levels ?? [], level).flatMap(holeRects))
 
 /*
  * Performance:

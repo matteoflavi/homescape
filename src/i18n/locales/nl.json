@@ -1879,5 +1879,13 @@
  "{room} deleted. ⌘Z undoes it.": "{room} verwijderd. Ongedaan maken met ⌘Z.",
  "{value}%": "{value}%",
  "Ø {d} m · can be oval": "Ø {d} m · kan ovaal zijn",
- "⌥ or ⇧ + left drag": "⌥ of ⇧ + met links slepen"
+ "⌥ or ⇧ + left drag": "⌥ of ⇧ + met links slepen",
+ "L, turns left": "L, draait naar links",
+ "L, turns right": "L, draait naar rechts",
+ "L-shaped stairs": "L-vormige trap",
+ "a landing or winders, anywhere": "bordes of verdreven treden, waar je wilt",
+ "Steps": "Treden",
+ "Steps in the turn": "Treden in de draai",
+ "Steps after the turn": "Treden na de draai",
+ "Steps in the turn: 1 is a flat landing, more are winders. Straight steps are 27 cm deep: the stairs get longer or wider as you change the steps.": "Treden in de draai: 1 is een vlak bordes, meer zijn verdreven treden. Rechte treden zijn 27 cm diep: de trap wordt langer of breder als je ze wijzigt."
 }

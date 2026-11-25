@@ -12,7 +12,7 @@ import { activeHomeId, activeLevel, homesOf, useLayout } from '@/model/layoutSto
 import { usePlacement } from '@/model/placement'
 import { maxWidth, PANEL_DEFAULT, usePanel } from './panelState'
 import { checkItem, isWallMounted, MOUNTABLE, mountRange, overlapsRoom, SURFACE_Y, surfaceAt, wallTop } from '@/model/rules'
-import { stairsWallRuns } from '@/model/stairs'
+import { isLStairs, lStairsSize, lSteps, stairsWallRuns } from '@/model/stairs'
 import { containerOf, interiorOf, moveWithContents, placeInside, toLocal } from '@/model/containers'
 import { counterSink, islandParts } from '@/model/counter'
 import { mountCenter, mountY, setMountY, setWallMount } from './mount'
@@ -622,7 +622,41 @@ function FurnitureOptions({ item }: { item: Item }) {
           {item.powerSource === 'solar' && <span className="text-[11px] text-ink-3">{t('Unbound solar lights turn on automatically at night.')}</span>}
         </div>
       )}
-      {item.kind === 'stairs' && (
+      {item.kind === 'stairs' && isLStairs(item) && (
+        // L stairs (model/stairs.ts): the landing sits anywhere along the climb; the size follows the step counts
+        <div className="grid gap-2">
+          {(
+            [
+              ['steps', t('Steps'), 4, 24, lSteps(item).n],
+              ['cornerSteps', t('Steps in the turn'), 1, 6, lSteps(item).corner],
+              ['stepsAfter', t('Steps after the turn'), 0, lSteps(item).n - 2 - lSteps(item).corner, lSteps(item).after],
+            ] as const
+          ).map(([key, label, min, max, value]) => (
+            <label key={key} className="grid gap-1.5">
+              <span className="flex justify-between text-[12px] font-semibold text-ink-2">
+                {label}
+                <span className="font-mono tabular-nums text-ink">{value}</span>
+              </span>
+              <input
+                type="range"
+                data-stair-steps={key}
+                min={min}
+                max={max}
+                step={1}
+                value={value}
+                onPointerDown={() => checkpoint()}
+                onChange={(e) => {
+                  const counts = lSteps({ steps: item.steps, cornerSteps: item.cornerSteps, stepsAfter: item.stepsAfter, [key]: Number(e.target.value) })
+                  const next = { steps: counts.n, cornerSteps: counts.corner, stepsAfter: counts.after }
+                  tryPatch({ ...next, ...lStairsSize(next) }, false, `${label}: ${Number(e.target.value)}`)
+                }}
+              />
+            </label>
+          ))}
+          <span className="text-[11px] text-ink-3">{t('Steps in the turn: 1 is a flat landing, more are winders. Straight steps are 27 cm deep: the stairs get longer or wider as you change the steps.')}</span>
+        </div>
+      )}
+      {item.kind === 'stairs' && !isLStairs(item) && (
         // Walls along the stairs' long sides (model/stairs.ts): items stand against them, walking is blocked
         <div className="grid gap-1.5">
           <span className="text-[12px] font-semibold text-ink-2">{t('Walls')}</span>

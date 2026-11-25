@@ -1879,5 +1879,13 @@
  "{room} deleted. ⌘Z undoes it.": "已删除 {room}。按 ⌘Z 可撤销。",
  "{value}%": "{value}%",
  "Ø {d} m · can be oval": "Ø {d} m · 也可做成椭圆",
- "⌥ or ⇧ + left drag": "⌥ 或 ⇧ + 左键拖动"
+ "⌥ or ⇧ + left drag": "⌥ 或 ⇧ + 左键拖动",
+ "L, turns left": "L 形，向左转",
+ "L, turns right": "L 形，向右转",
+ "L-shaped stairs": "L 形楼梯",
+ "a landing or winders, anywhere": "平台或扇形踏步，任意位置",
+ "Steps": "台阶数",
+ "Steps in the turn": "转弯处台阶数",
+ "Steps after the turn": "转弯后台阶数",
+ "Steps in the turn: 1 is a flat landing, more are winders. Straight steps are 27 cm deep: the stairs get longer or wider as you change the steps.": "转弯处台阶数：1 为平台，更多为扇形踏步。直跑台阶深 27 厘米：改变台阶数时楼梯会变长或变宽。"
 }

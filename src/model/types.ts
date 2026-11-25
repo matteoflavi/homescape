@@ -349,6 +349,12 @@ export interface Item {
    * walking and items stand against their outer faces (model/stairs.ts; GitHub issue #10).
    */
   walls?: 'left' | 'right' | 'both'
+  /** Stairs: number of steps (risers) from floor to floor; L stairs only, 14 when not given (model/stairs.ts) */
+  steps?: number
+  /** L stairs: treads in the 90° turn, 1 for a flat corner landing (when not given), 2 or more for winders */
+  cornerSteps?: number
+  /** L stairs: treads after the turn, on the second flight (3 when not given; 0: the turn arrives at the floor above) */
+  stepsAfter?: number
   /** Length of items with adjustable length (local x, m): desk */
   len?: number
   /** Drawer unit of the desk */

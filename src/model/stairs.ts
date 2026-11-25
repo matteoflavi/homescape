@@ -19,6 +19,49 @@ export const U_LANDING = 1
 export const U_SIZE = { len: U_FLIGHT * 2 + U_GAP, len2: 2.6 }
 
 export const isUStairs = (it: Pick<Item, 'variant'>) => it.variant === 'uLeft' || it.variant === 'uRight'
+
+/*
+ * L stairs (Item.variant 'lLeft' | 'lRight', the way they turn): a first flight climbing toward -z on the side away from
+ * the turn, a square corner at the -z end where the stairs turn 90°, and a second flight leaving the corner sideways
+ * (local +x for 'lRight') along the -z end, arriving at that side. The corner is a flat landing (Item.cornerSteps 1) or
+ * winders, wedge treads fanning around the inner corner (2 or more). Item.steps counts the steps (risers) from floor to
+ * floor; the treads are one fewer (the last step is the floor above): first flight, corner, then Item.stepsAfter on the
+ * second flight. So the turn can sit anywhere along the climb. Straight treads are L_TREAD deep and the footprint follows
+ * from the counts (lStairsSize): changing a count resizes the stairs.
+ */
+export const L_FLIGHT = 1
+export const L_TREAD = 0.27
+export const L_STEPS_DEF = 14
+export const L_AFTER_DEF = 3
+export const isLStairs = (it: Pick<Item, 'variant'>) => it.variant === 'lLeft' || it.variant === 'lRight'
+/** Side the second flight leaves toward: +1 local +x (turns right going up), -1 local -x */
+export const lTurnSide = (it: Pick<Item, 'variant'>) => (it.variant === 'lRight' ? 1 : -1)
+type LCounts = Pick<Item, 'steps' | 'cornerSteps' | 'stepsAfter'>
+/** Step counts, kept so that the first flight has at least one tread: steps (risers), treads before, in and after the turn */
+export function lSteps(it: LCounts) {
+  const n = Math.round(Math.min(24, Math.max(4, it.steps ?? L_STEPS_DEF)))
+  const corner = Math.round(Math.min(6, Math.max(1, it.cornerSteps ?? 1)))
+  const after = Math.round(Math.min(n - 2 - corner, Math.max(0, it.stepsAfter ?? L_AFTER_DEF)))
+  return { n, corner, after, before: n - 1 - corner - after, fan: corner > 1 }
+}
+/** Footprint of L stairs from their step counts. len: across (local x), len2: along (local z). */
+export function lStairsSize(it: LCounts) {
+  const { before, after } = lSteps(it)
+  return { len: L_FLIGHT + after * L_TREAD, len2: before * L_TREAD + L_FLIGHT }
+}
+/** Geometry of L stairs in the local frame */
+export function lLayout(it: Pick<Item, 'variant' | 'len' | 'len2'> & LCounts) {
+  const { w, l } = stairsSize(it)
+  const sT = lTurnSide(it)
+  const c = lSteps(it)
+  const rise = STAIRS_H / c.n
+  // First flight centred on fx (the side away from the turn), from +l/2 down to the corner at zL; the corner's inner
+  // point (pivot) is where the first flight's inner side meets the corner
+  const fx = -sT * (w / 2 - L_FLIGHT / 2)
+  const zL = -l / 2 + L_FLIGHT
+  return { w, l, sT, ...c, rise, fx, zL, px: fx + (sT * L_FLIGHT) / 2, h1: c.before * rise, h2: (c.before + c.corner) * rise }
+}
+
 /** Side of the second flight: +1 local +x (turns right going up), -1 local -x */
 export const uSecondSide = (it: Pick<Item, 'variant'>) => (it.variant === 'uRight' ? 1 : -1)
 
@@ -28,14 +71,21 @@ export const stairsSize = (it: Pick<Item, 'len' | 'len2'>) => {
   return { w, l }
 }
 
+/** Turned fraction (0 entering the corner, 1 leaving it) of a local point in the corner, around the pivot */
+export function cornerTurn(g: { sT: number; px: number; zL: number }, lx: number, lz: number) {
+  const a = Math.atan2(g.zL - lz, -g.sT * (lx - g.px))
+  return Math.max(0, Math.min(1, a / (Math.PI / 2)))
+}
+
 /**
  * Foot height (m above the floor) at a local point of the stairs, null outside. Straight: a ramp from the +z end up to
  * STAIRS_H at the -z end. U: the first flight from the +z end up to the landing (half height), the landing, then the
  * second flight from the landing up to STAIRS_H at the +z end.
  */
-export function stairsHeightLocal(it: Pick<Item, 'variant' | 'len' | 'len2'>, lx: number, lz: number): number | null {
+export function stairsHeightLocal(it: Pick<Item, 'variant' | 'len' | 'len2' | 'steps' | 'cornerSteps' | 'stepsAfter'>, lx: number, lz: number): number | null {
   const { w, l } = stairsSize(it)
   if (Math.abs(lx) > w / 2 + 0.05 || Math.abs(lz) > l / 2 + 0.05) return null
+  if (isLStairs(it)) return lHeight(it, lx, lz)
   if (!isUStairs(it)) return Math.max(0, Math.min(1, (l / 2 - lz) / l)) * STAIRS_H
   const half = STAIRS_H / 2
   const landing = -l / 2 + U_LANDING
@@ -44,6 +94,24 @@ export function stairsHeightLocal(it: Pick<Item, 'variant' | 'len' | 'len2'>, lx
   const second = Math.sign(lx || -1) === uSecondSide(it)
   const t = Math.max(0, Math.min(1, (l / 2 - lz) / run))
   return second ? half + (1 - t) * half : t * half
+}
+
+/**
+ * L stairs: a ramp along the first flight, the corner (flat, or rising with the turned angle for winders), a ramp along
+ * the second flight up to STAIRS_H at its far end. null in the empty corner beside the first flight (under the second one
+ * there is room to walk).
+ */
+function lHeight(it: Pick<Item, 'variant' | 'len' | 'len2'> & LCounts, lx: number, lz: number): number | null {
+  const g = lLayout(it)
+  const inFirst = Math.abs(lx - g.fx) <= L_FLIGHT / 2 + 0.05
+  if (lz > g.zL) {
+    if (!inFirst) return null
+    return Math.max(0, Math.min(1, (g.l / 2 - lz) / (g.l / 2 - g.zL))) * g.h1
+  }
+  const fromCorner = g.sT * (lx - g.px)
+  if (fromCorner <= 0) return g.fan ? g.h1 + cornerTurn(g, lx, lz) * (g.h2 - g.h1) : g.h2
+  const run = g.w - L_FLIGHT
+  return g.h2 + Math.max(0, Math.min(1, fromCorner / Math.max(run, 0.01))) * (STAIRS_H - g.h2)
 }
 
 /** Straight segments (world) of the solid parts that block walking: side walls, and the spine between U flights */
@@ -62,7 +130,7 @@ export function stairsSegments(items: Item[]): { a: { x: number; z: number }; b:
 }
 
 /** Local x sides (-1, +1) that have a wall along them */
-export const wallSides = (it: Pick<Item, 'walls'>) => (it.walls === 'both' ? [-1, 1] : it.walls === 'left' ? [-1] : it.walls === 'right' ? [1] : [])
+export const wallSides = (it: Pick<Item, 'walls' | 'variant'>) => (isLStairs(it) ? [] : it.walls === 'both' ? [-1, 1] : it.walls === 'left' ? [-1] : it.walls === 'right' ? [1] : [])
 
 const SIDE_OF_X: Record<number, WallSide> = { 1: 'left', [-1]: 'right' }
 const SIDE_OF_Z: Record<number, WallSide> = { 1: 'back', [-1]: 'front' }

@@ -71,6 +71,10 @@ export interface ItemOpts {
   dishwasher?: Item['dishwasher']
   /** Stairs: walls along the long sides (Item.walls; model/stairs.ts) */
   walls?: 'left' | 'right' | 'both'
+  /** L stairs: step counts (Item.steps, Item.cornerSteps, Item.stepsAfter) */
+  steps?: number
+  cornerSteps?: number
+  stepsAfter?: number
   /** Garden light: spotlight tilt and power source (a solar panel on top) */
   tilt?: number
   powerSource?: Item['powerSource']

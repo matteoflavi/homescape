@@ -1879,5 +1879,13 @@
  "{room} deleted. ⌘Z undoes it.": "Комната {room} удалена. Отменить: ⌘Z.",
  "{value}%": "{value} %",
  "Ø {d} m · can be oval": "Ø {d} m · может быть овальным",
- "⌥ or ⇧ + left drag": "⌥ или ⇧ + перетаскивание левой кнопкой"
+ "⌥ or ⇧ + left drag": "⌥ или ⇧ + перетаскивание левой кнопкой",
+ "L, turns left": "Г-образная, поворот налево",
+ "L, turns right": "Г-образная, поворот направо",
+ "L-shaped stairs": "Г-образная лестница",
+ "a landing or winders, anywhere": "площадка или забежные ступени, где угодно",
+ "Steps": "Ступени",
+ "Steps in the turn": "Ступени в повороте",
+ "Steps after the turn": "Ступени после поворота",
+ "Steps in the turn: 1 is a flat landing, more are winders. Straight steps are 27 cm deep: the stairs get longer or wider as you change the steps.": "Ступени в повороте: 1 — плоская площадка, больше — забежные ступени. Прямые ступени глубиной 27 см: при изменении лестница становится длиннее или шире."
 }

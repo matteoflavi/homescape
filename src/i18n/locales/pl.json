@@ -1879,5 +1879,13 @@
  "{room} deleted. ⌘Z undoes it.": "Usunięto pokój {room}. Cofnij: ⌘Z.",
  "{value}%": "{value}%",
  "Ø {d} m · can be oval": "Ø {d} m · może być owalny",
- "⌥ or ⇧ + left drag": "⌥ lub ⇧ + przeciągnięcie lewym przyciskiem"
+ "⌥ or ⇧ + left drag": "⌥ lub ⇧ + przeciągnięcie lewym przyciskiem",
+ "L, turns left": "L, skręca w lewo",
+ "L, turns right": "L, skręca w prawo",
+ "L-shaped stairs": "Schody w kształcie L",
+ "a landing or winders, anywhere": "spocznik lub stopnie zabiegowe, gdziekolwiek",
+ "Steps": "Stopnie",
+ "Steps in the turn": "Stopnie w zakręcie",
+ "Steps after the turn": "Stopnie po zakręcie",
+ "Steps in the turn: 1 is a flat landing, more are winders. Straight steps are 27 cm deep: the stairs get longer or wider as you change the steps.": "Stopnie w zakręcie: 1 to płaski spocznik, więcej to stopnie zabiegowe. Proste stopnie mają 27 cm głębokości: schody wydłużają się lub poszerzają, gdy je zmieniasz."
 }

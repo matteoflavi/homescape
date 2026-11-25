@@ -1879,5 +1879,13 @@
  "{room} deleted. ⌘Z undoes it.": "Se eliminó {room}. ⌘Z lo deshace.",
  "{value}%": "{value} %",
  "Ø {d} m · can be oval": "Ø {d} m · puede ser oval",
- "⌥ or ⇧ + left drag": "⌥ o ⇧ + arrastrar con el izquierdo"
+ "⌥ or ⇧ + left drag": "⌥ o ⇧ + arrastrar con el izquierdo",
+ "L, turns left": "L, gira a la izquierda",
+ "L, turns right": "L, gira a la derecha",
+ "L-shaped stairs": "Escalera en L",
+ "a landing or winders, anywhere": "rellano o peldaños compensados, donde quieras",
+ "Steps": "Peldaños",
+ "Steps in the turn": "Peldaños en el giro",
+ "Steps after the turn": "Peldaños tras el giro",
+ "Steps in the turn: 1 is a flat landing, more are winders. Straight steps are 27 cm deep: the stairs get longer or wider as you change the steps.": "Peldaños en el giro: 1 es un rellano plano, más son peldaños compensados. Los peldaños rectos miden 27 cm: la escalera se alarga o ensancha al cambiarlos."
 }
